@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import { rateLimit } from 'express-rate-limit';
+import rateLimit from 'express-rate-limit';
 import connectDB from './config/db.js';
 import errorMiddleware from './middleware/error.middleware.js';
 
@@ -22,45 +22,41 @@ import notificationRoutes from './routes/notification.routes.js';
 import leaderboardRoutes from './routes/leaderboard.routes.js';
 
 dotenv.config();
-
-// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Security HTTP headers
+// Security
 app.use(helmet());
 
-// Logging
+// Logs
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// -----------------------------
-// FIX: Rate limiter (IMPORTANT)
-// -----------------------------
+// ==========================
+// RATE LIMITER (FIXED)
+// ==========================
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // increased limit for dev (was 100)
-  message: 'Too many requests from this IP, please try again after 15 minutes'
+  windowMs: 15 * 60 * 1000,
+  max: 1000
 });
 
-// ❌ OLD (REMOVED)
-// app.use('/api', limiter);
+// Apply globally to API (better than only auth)
+app.use('/api', limiter);
 
-// ✅ NEW (safe usage)
-app.use('/api/auth', limiter);
-
-// Enable CORS
+// ==========================
+// CORS (IMPORTANT FIX)
+// ==========================
 app.use(cors({
-  origin: process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    'http://localhost:5173',
+    'https://golf-olk7-git-main-aishsarojs-projects.vercel.app'
+  ],
   credentials: true
 }));
 
 app.use(cookieParser());
-
-// Webhook needs raw body parser
-app.use('/api/webhooks', express.raw({ type: 'application/json' }), webhookRoutes);
 
 // Body parser
 app.use(express.json({ limit: '10kb' }));
@@ -68,6 +64,9 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Static files
 app.use('/uploads', express.static('uploads'));
+
+// Webhook raw body
+app.use('/api/webhooks', express.raw({ type: 'application/json' }), webhookRoutes);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -81,7 +80,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 
-// Global Error Handler
+// Error handler
 app.use(errorMiddleware);
 
 export default app;
