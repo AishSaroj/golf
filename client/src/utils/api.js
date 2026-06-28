@@ -1,29 +1,36 @@
 import axios from 'axios';
 
-// We will inject the store later to prevent circular dependencies
+// Store injection (kept as you had it)
 let store;
 
 export const injectStore = (_store) => {
   store = _store;
 };
 
+// ✅ FIXED BASE URL LOGIC
+const BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://golf-backend-yv0a.onrender.com/api';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: BASE_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
+// ========================
+// REQUEST INTERCEPTOR
+// ========================
 api.interceptors.request.use(
   (config) => {
     if (store) {
       const token = store.getState().auth?.token;
 
       if (token) {
-        // 🚨 IMPORTANT FIX: do NOT attach token on auth routes
         const url = config.url || '';
 
+        // Don't attach token for auth routes
         const isPublicRoute =
           url.includes('/auth/login') ||
           url.includes('/auth/register') ||
@@ -40,18 +47,20 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// ========================
+// RESPONSE INTERCEPTOR
+// ========================
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // If 401 and we haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_API_URL || '/api'}/auth/refresh`,
+          `${BASE_URL}/auth/refresh`,
           {},
           { withCredentials: true }
         );
