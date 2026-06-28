@@ -48,11 +48,13 @@ app.use('/api', limiter);
 // ==========================
 // CORS (IMPORTANT FIX)
 // ==========================
-app.use(cors({
+aapp.use(cors({
   origin: [
-    'http://localhost:5173',
-    'https://golf-olk7-git-main-aishsarojs-projects.vercel.app'
+    "http://localhost:5173",
+    "https://golf-olk7-git-main-aishsarojs-projects.vercel.app"
   ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
