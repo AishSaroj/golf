@@ -36,13 +36,20 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Rate limiting
+// -----------------------------
+// FIX: Rate limiter (IMPORTANT)
+// -----------------------------
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  max: 1000, // increased limit for dev (was 100)
   message: 'Too many requests from this IP, please try again after 15 minutes'
 });
-app.use('/api', limiter);
+
+// ❌ OLD (REMOVED)
+// app.use('/api', limiter);
+
+// ✅ NEW (safe usage)
+app.use('/api/auth', limiter);
 
 // Enable CORS
 app.use(cors({
@@ -52,16 +59,17 @@ app.use(cors({
 
 app.use(cookieParser());
 
-// Webhook needs raw body parser, so define it before express.json()
+// Webhook needs raw body parser
 app.use('/api/webhooks', express.raw({ type: 'application/json' }), webhookRoutes);
 
-// Body parser, reading data from body into req.body
+// Body parser
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-// Static file serving
+// Static files
 app.use('/uploads', express.static('uploads'));
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/scores', scoreRoutes);
@@ -72,7 +80,6 @@ app.use('/api/winners', winnerRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
-
 
 // Global Error Handler
 app.use(errorMiddleware);

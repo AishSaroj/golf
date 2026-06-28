@@ -13,15 +13,15 @@ const HowItWorks = () => {
             to your chosen charity. The rest goes into our massive monthly prize pool.
           </p>
           <div className="p-6 bg-surface-2 rounded-xl mt-8 border border-border">
-             <h3 className="text-white font-bold mb-4 font-display">1. Play Golf and Enter Scores</h3>
+             <h3 className=" text-black font-bold mb-4 font-display">1. Play Golf and Enter Scores</h3>
              <p>Submit up to 5 Stableford scores per month from any official course. Your scores form your "ticket" for the monthly draw.</p>
           </div>
           <div className="p-6 bg-surface-2 rounded-xl mt-4 border border-border">
-             <h3 className="text-white font-bold mb-4 font-display">2. Support Charities</h3>
+             <h3 className="text-black font-bold mb-4 font-display">2. Support Charities</h3>
              <p>Select which verified golf-affiliated charity receives your monthly direct contribution percentage.</p>
           </div>
           <div className="p-6 bg-surface-2 rounded-xl mt-4 border border-border">
-             <h3 className="text-white font-bold mb-4 font-display">3. Match and Win</h3>
+             <h3 className="text-black font-bold mb-4 font-display">3. Match and Win</h3>
              <p>At the end of the month, 5 numbers are drawn. Match 3, 4, or all 5 numbers from your scores to win huge cash prizes.</p>
           </div>
         </div>

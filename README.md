@@ -122,7 +122,7 @@ npm run dev
 ```
 
 That starts:
-- Backend on `http://localhost:5000`
+- Backend on `http://localhost:5001`
 - Frontend on `http://localhost:5173`
 
 To run either app on its own:

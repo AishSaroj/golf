@@ -22,7 +22,10 @@ export const Navbar = () => {
         if (response.data.success) {
           const nextNotifications = response.data.data.notifications || [];
           dispatch(setNotifications(nextNotifications));
-          setUnreadCount(response.data.data.unreadCount ?? nextNotifications.filter((notification) => !notification.isRead).length);
+          setUnreadCount(
+            response.data.data.unreadCount ??
+            nextNotifications.filter((notification) => !notification.isRead).length
+          );
         }
       } catch {
         // Keep the navbar usable if notifications fail to load.
@@ -41,9 +44,15 @@ export const Navbar = () => {
               <Sparkles size={16} />
             </div>
           </div>
+
+          {/* ✅ CHANGED ONLY HERE */}
           <div className="hidden sm:block leading-none">
-            <span className="block font-display font-bold text-xl tracking-tight">Golf Charity</span>
-            <span className="block text-[11px] uppercase tracking-[0.3em] text-text-secondary mt-1">Classic golf giving</span>
+            <span className="block font-display font-bold text-xl tracking-tight">
+              GOLF
+            </span>
+            <span className="block text-[11px] uppercase tracking-[0.3em] text-text-secondary mt-1">
+              Digital Heros
+            </span>
           </div>
         </Link>
 
